@@ -20,16 +20,4 @@ class PokemonService(
     }
 
 
-
-
-    suspend fun getAllPokemon(): Map<String, String> = skrape(AsyncFetcher) {
-        request {
-            url = "https://pokestore.no/"
-        }
-        response {
-            htmlDocument { eachLink }
-        }
-    }
-
-
 }
