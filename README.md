@@ -12,7 +12,6 @@ The project is intentionally kept minimal and explicit, with a clear separation 
 - Fetch HTML from webshop product pages
 - Parse availability status (in stock / out of stock / unknown)
 - Return structured results
-- Keep scraping isolated from API and business logic
 
 ## Tech stack
 
