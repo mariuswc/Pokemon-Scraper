@@ -1,5 +1,7 @@
 package org.example.service
 
+import client.PokemonClient
+import client.pokemonClient
 import it.skrape.core.document
 import it.skrape.core.htmlDocument
 import it.skrape.fetcher.BrowserFetcher
@@ -12,6 +14,7 @@ import it.skrape.selects.eachLink
 import it.skrape.selects.html5.a
 import it.skrape.selects.html5.p
 import kotlinx.coroutines.withTimeout
+import org.example.data.PokemonResponse
 import org.jsoup.nodes.Document
 import org.springframework.stereotype.Service
 import org.slf4j.Logger
@@ -19,31 +22,18 @@ import org.springframework.boot.Banner
 
 
 @Service
-class PokemonService() {
-
-    //Not implemented yet
-//    private val logger: Logger = org.slf4j.LoggerFactory.getLogger(javaClass)
-
-    data class Html(
-        val htmlResponse: String,
-        val length: Int
-    )
-
-    fun getPokemonSet(): Html {
-        val extracted = skrape(BrowserFetcher) {
-            request {
-                url = "https://poke-shop.no/"
-                method = Method.GET
-                sslRelaxed = true
-            }
-            response { htmlDocument { document.toString() } }
-        }
-        return Html(extracted, extracted.length)
-    }
+class PokemonService(
+    private val pokemonClient: PokemonClient,
+) {
 
 
 
-    fun doSomethingWithHTML(html: Html){
+    fun doSomethingWithHTML(): PokemonResponse {
+        val scrapedSite = pokemonClient.getPokemonSet()
+        val name = scrapedSite
+        val price = scrapedSite.length
+        val stockStatus = scrapedSite.toBoolean()
+        return PokemonResponse(name, price, stockStatus)
 
     }
 }
