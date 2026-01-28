@@ -1,6 +1,7 @@
 package org.example.service
 
 import it.skrape.core.document
+import it.skrape.core.htmlDocument
 import it.skrape.fetcher.BrowserFetcher
 import it.skrape.fetcher.HttpFetcher
 import it.skrape.fetcher.Method
@@ -24,7 +25,8 @@ class PokemonService() {
 //    private val logger: Logger = org.slf4j.LoggerFactory.getLogger(javaClass)
 
     data class Html(
-        val htmlResponse: Doc
+        val htmlResponse: String,
+        val length: Int
     )
 
     fun getPokemonSet(): Html {
@@ -34,8 +36,14 @@ class PokemonService() {
                 method = Method.GET
                 sslRelaxed = true
             }
-            response { document }
+            response { htmlDocument { document.toString() } }
         }
-        return extracted
+        return Html(extracted, extracted.length)
+    }
+
+
+
+    fun doSomethingWithHTML(html: Html){
+
     }
 }
