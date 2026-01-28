@@ -18,6 +18,7 @@ dependencies {
     implementation("org.jsoup:jsoup:1.17.2")
     implementation("org.springframework.boot:spring-boot-starter-mustache")
     implementation("it.skrape:skrapeit:1.2.2")
+    implementation("org.slf4j:slf4j-api:2.0.9")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 

@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController
 import org.example.service.PokemonService
 
 @RestController
-@RequestMapping("api/pokemon")
+@RequestMapping("/api/pokemon")
 class PokemonController(
     val pokemonService: PokemonService,
 ){
