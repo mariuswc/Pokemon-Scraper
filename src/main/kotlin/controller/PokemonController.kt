@@ -1,6 +1,7 @@
 package org.example.controller
 
-import it.skrape.selects.Doc
+
+import org.example.data.PokemonResponse
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -13,8 +14,8 @@ class PokemonController(
 ){
 
     @GetMapping()
-    fun getPokemon(): PokemonService.Html {
-        return pokemonService.getPokemonSet()
+    fun getPokemon(): PokemonResponse {
+        return pokemonService.doSomethingWithHTML()
     }
 
 }
