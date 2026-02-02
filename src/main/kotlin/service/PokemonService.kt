@@ -1,29 +1,64 @@
 package org.example.service
 
-import it.skrape.core.document
-import it.skrape.fetcher.HttpFetcher
-import it.skrape.fetcher.response
-import it.skrape.fetcher.skrape
+import io.github.oshai.kotlinlogging.KLogger
 import it.skrape.selects.Doc
-import it.skrape.selects.eachLink
-import it.skrape.selects.html5.a
-import it.skrape.selects.html5.p
+import org.example.client.PokemonClient
+import org.example.data.PokemonResponse
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.stereotype.Service
 
 
 @Service
-class PokemonService() {
+class PokemonService(
+    private val pokemonClient: PokemonClient,
+    private val logger: KLogger = KotlinLogging.logger {}
 
-    data class Html(
-        val htmlResponse: String,
-    )
-
-    fun getPokemonSet(): Html {
-        val extracted = skrape(HttpFetcher) {
-            request { url { "https://poke-shop.no/" } }
-            response { document.findAll("") }
-
-        }
-        return Html(htmlResponse = extracted.toString())
+) {
+    fun getPokemon(): PokemonResponse {
+        val doc = pokemonClient.getSiteHtml()
+        val name = findPokemonName(doc)
+        val price = findPokemonPrice(doc)
+        val stock = findPokemonStockStatus(doc)
+        return PokemonResponse(name, price, stock)
     }
-}
+
+    fun findPokemonName(doc: Doc): String {
+        try {
+            return doc.findAll("h1").firstOrNull()?.text ?: ""
+        } catch (e: Exception) {
+            throw IllegalArgumentException("Unable to find Pokemon name", e)
+        }
+    }
+
+
+        fun findPokemonPrice(doc: Doc): String {
+            try {
+                return doc.findFirst("price_display").toString()
+                    ?: "Unknown price"
+            } catch (e: Exception) {
+                throw IllegalArgumentException("Unable to find price", e)
+            }
+        }
+
+
+        fun findPokemonStockStatus(doc: Doc): Boolean { //can also filter on product__meta-numbers
+            try {
+                val buyButton = doc.findFirst("button.product__buy-button")
+
+                val inStock = when {
+                    buyButton == null -> false // not in stock
+                    buyButton.hasAttribute("disabled") -> false //not in stock
+                    buyButton.text.contains("utsolgt", ignoreCase = true) -> false //not in stock
+                    else -> true //returns inStock
+                }
+                return inStock
+            } catch (e: Exception) {
+                throw IllegalArgumentException("Unable to get stock status", e)
+            }
+        }
+    }
+
+
+
+
+

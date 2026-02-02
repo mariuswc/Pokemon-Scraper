@@ -1,8 +1,8 @@
 package org.example.data
 
 data class PokemonResponse(
-    val name: String,
-    val price: Int?,
-    val stockStatus: Int?,
+    val name: String?,
+    val price: String?,
+    val stockStatus: Boolean?
 )
 
