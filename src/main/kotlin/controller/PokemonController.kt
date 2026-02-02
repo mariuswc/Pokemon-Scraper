@@ -14,8 +14,8 @@ class PokemonController(
 ){
 
     @GetMapping()
-    fun getPokemon(): PokemonResponse {
-        return pokemonService.doSomethingWithHTML()
+    fun getPokemon(): PokemonResponse  {
+        return pokemonService.getPokemon()
     }
 
 }

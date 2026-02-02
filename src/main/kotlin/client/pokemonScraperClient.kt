@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class PokemonClient {
-    fun getPokemonSet(): Doc {
+    fun getSiteHtml(): Doc {
         val extracted = skrape(BrowserFetcher) {
             request {
                 url = "https://poke-shop.no/"
