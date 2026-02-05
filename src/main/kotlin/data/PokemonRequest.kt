@@ -1,5 +1,5 @@
 package org.example.data
 
 data class PokemonRequest(
-    val url: String
+    val name: String
 )

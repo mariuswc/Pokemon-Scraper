@@ -1,63 +1,54 @@
 package org.example.filter
 
 import it.skrape.selects.Doc
-import org.example.service.PokemonService
+import it.skrape.selects.DocElement
+import org.springframework.context.annotation.Configuration
 
-class pokemonFilter(
-    private val pokemonService: PokemonService
-)
+@Configuration
+class PokemonFilter {
 
-{
+    fun findProduct(doc: Doc, requestedName: String): DocElement {
+        return doc.findAll(".product")
+            .firstOrNull { product ->
+                val productName = product
+                    .findFirst("[itemprop=name]")
+                    ?.text
+                    ?.normalize()
 
-
-    fun filteringPokemonSets(doc: Doc, pokeset: String){
-        pokeset.toString()
-
+                productName?.contains(requestedName.normalize()) == true
+            }
+            ?: throw IllegalArgumentException("Product not found: $requestedName")
     }
 
+    fun findPokemonName(product: DocElement): String =
+        product.findFirst("[itemprop=name]")?.text
+            ?: throw IllegalArgumentException("Pokemon name not found")
 
+    fun findPokemonPrice(product: DocElement): Int =
+        product.findFirst("[itemprop=price]")
+            ?.attribute("content")
+            ?.toInt()
+            ?: throw IllegalArgumentException("Pokemon price not found")
 
-    fun findPokemonName(doc: Doc): String? {
-        try {
-            return doc
-                .findFirst("h1.product__title[itemprop=name]")
-                ?.text
+    fun findPokemonStockStatus(product: DocElement): Boolean {
+        val action = product.findFirst(
+            ".product__buy-button, .productlist__product__button"
+        )
 
-
-        } catch (e: Exception) {
-            throw IllegalArgumentException("Unable to find Pokemon name", e)
+        return when {
+            action == null -> false
+            action.hasAttribute("disabled") -> false
+            action.text.contains("les mer", true) -> false
+            action.text.contains("utsolgt", true) -> false
+            else -> true
         }
     }
 
 
-    fun findPokemonPrice(doc: Doc): String? {
-        try {
-            return doc
-                .findFirst("[itemprop=price]")
-                .attribute("content")
-
-
-        } catch (e: Exception) {
-            throw IllegalArgumentException("Unable to find price", e)
-        }
-    }
-
-
-    fun findPokemonStockStatus(doc: Doc): Boolean {
-        return try {
-            doc.findFirst("[itemprop=availability]")
-                ?.attribute("href")
-                ?.endsWith("InStock") == true
-        } catch (e: Exception) {
-            throw IllegalArgumentException("Unable to get stock status", e)
-        }
-    }
-
-
-
-
-
-
-
-
+    private fun String.normalize(): String =
+        lowercase()
+            .replace("pokémon", "pokemon")
+            .replace("-", " ")
+            .replace(Regex("\\s+"), " ")
+            .trim()
 }
