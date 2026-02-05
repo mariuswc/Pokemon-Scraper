@@ -13,9 +13,10 @@ class PokemonClient {
     fun getSiteHtml(): Doc {
         val extracted = skrape(BrowserFetcher) {
             request {
-                url = "https://poke-shop.no/"
+                url = "https://poke-shop.no/produkt/alle-produkter/boosterpakker-1/chilling-reign"
                 method = Method.GET
                 sslRelaxed = true
+                timeout = (30000)
             }
             response {document}
 
